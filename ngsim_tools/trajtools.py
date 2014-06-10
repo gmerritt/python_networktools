@@ -40,8 +40,8 @@ def filter_by_origin(tlist, origin):
     origin_trajs=[]
     for tl in tlist:
         for dp in tl:
-                if dp[14] == str(origin):
-                    origin_trajs.append(dp)
+            if dp[14] == str(origin):
+                origin_trajs.append(dp)
     return [origin_trajs]
 
 
@@ -57,9 +57,27 @@ def filter_by_destination(tlist, destination):
 
 '''
     once you have culled down the total list of trajectories into one that is more managable, use these functions to
-    transform this list into Trajectory objects
+    transform this list into Trajectory objects and manipulate these objects
 '''
+from ngsimobjects import Trajectory
 
 def convert_list_to_trajectories(tlist):
+    vehs={}
+    for tl in tlist:
+        for dp in tl:
+            # print(dp)
+            # time.sleep(1)
+            # print(dp[0])
+            id = int(dp[0])
+            if not vehs.has_key(id):
+                vehs[id]=[]
+            vehs[id].append(dp)
+    # print vehs[id]
+    trajectories = []
+    for v in vehs.keys():
+        trajectories.append(Trajectory(vehs[v]))
+    return trajectories
+
+def calculate_demands(trajectories):
     return 0
 
