@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 import time
 
 
-scenario_file = './Lshim_v2.xml'
+scenario_file = './fixthisone.xml'
 tree = ET.parse(scenario_file)
 scenario = tree.getroot()
 network = scenario.find('NetworkSet/network')
@@ -22,15 +22,20 @@ for n in nodes.iter('node'):
         bad_outs.remove(o)
     for i in bad_ins.findall('input'):
         bad_ins.remove(i)
-    # ET.dump(n)
 
 '''
-STEP 2: add correct references to input/output links in node structures
+STEP 2: add correct references to input/output links in node structures, and remove all fields
+from link definitions that should be automatically regenerated
 '''
 for l in links.iter('link'):
     input_id = l.find('begin').attrib['node_id']
     input_node = nodes.find(".//node[@id='"+input_id+"']")
-    ET.SubElement(input_node.find('outputs'), 'output', {'link_id':l.attrib['id']})
-    # ET.dump(input_node)
+    ET.SubElement(input_node.find('inputs'), 'input', {'link_id':l.attrib['id']})
+    output_id = l.find('end').attrib['node_id']
+    output_node = nodes.find(".//node[@id='"+output_id+"']")
+    ET.SubElement(output_node.find('outputs'), 'output', {'link_id':l.attrib['id']})
+    l.remove(l.find('position'))
+    l.remove(l.find('shape'))
+    l.remove(l.find('roads'))
 
-
+tree.write("thisoneisfixed.xml")
