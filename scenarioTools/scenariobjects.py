@@ -31,6 +31,10 @@ class ScenarioNetwork:
         self.nodes = [n.attrib['id'] for n in nodes.iter('node')]
         self.link_dict = link_dict
         self.node_dict = node_dict
+        scenario_path = scenario_file_name.split('/')
+        self.name = scenario_path.pop()
+        print self.name
+        self.file_location = '/'.join(scenario_path)
 
     def get_link_dict(self):
         return self.link_dict

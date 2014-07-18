@@ -1,6 +1,7 @@
 __author__ = 'leahanderson'
 
 import operator
+from itertools import izip, count
 
 
 class Trajectory(object):
@@ -38,15 +39,13 @@ class Trajectory(object):
             self.direction.append(vdirs[int(d[18])])
             self.movement.append(vmovs[int(d[19])])
 
-
-    @staticmethod
-    def generate_map(self):
-        return 0
-
-    def find_link_entry_time(self, link_id, direction):
-        #assumes that this vehicle only enters the link once in the given direction!
+    def find_last_time_in_link(self, link_id, direction):
         linkdir = zip(self.link, self.direction)
-        return self.time[linkdir.index([link_id, direction])]
+        # inlink = [i for i, j in izip(count(), linkdir) if j == (link_id, direction)]
+        lastin = len(linkdir)-1-linkdir[::-1].index((link_id, direction))
+        if lastin is []:
+            return None, None
+        return self.time[lastin], self.lane[lastin]
 
     def find_intersection_entry_time(self, intersection_id, direction=0):
         if direction == 0:
@@ -62,3 +61,4 @@ class Trajectory(object):
     def get_traj_point(self, time_index):
         return [self.time[time_index], self.origin, self.link[time_index], self.direction[time_index],
                 self.intersection[time_index], self.movement[time_index], self.x[time_index], self.y[time_index]]
+

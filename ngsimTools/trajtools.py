@@ -60,6 +60,8 @@ def filter_by_destination(tlist, destination):
     transform this list into Trajectory objects and manipulate these objects
 '''
 from ngsimobjects import Trajectory
+from numpy import histogram
+
 
 def convert_list_to_trajectories(tlist):
     vehs={}
@@ -78,6 +80,16 @@ def convert_list_to_trajectories(tlist):
         trajectories.append(Trajectory(vehs[v]))
     return trajectories
 
-def calculate_demands(trajectories):
-    return 0
 
+def output_count_sensor(trajectories, link_number, direction, lane_numbers, time_range, resolution):
+    exit_times=[]
+    if lane_numbers is not list:
+        lane_numbers = [lane_numbers]
+    for t in trajectories:
+        time_in_link, lane_in_link = t.find_last_time_in_link(link_number, direction)
+        if lane_in_link in lane_numbers:
+            exit_times.append(time_in_link)
+    exit_times.sort()
+    tbins = range(time_range[0], time_range[1], resolution*1000)
+    counts_vector, bin_edges = histogram(exit_times, tbins)
+    return bin_edges.tolist(), counts_vector.tolist()

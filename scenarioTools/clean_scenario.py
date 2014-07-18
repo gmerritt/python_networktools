@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 __author__ = 'leahanderson'
 import xml.etree.ElementTree as ET
-import time
+import sys
 
-
-scenario_file = './fixthisone.xml'
+scenario_file = sys.argv[1]
 tree = ET.parse(scenario_file)
 scenario = tree.getroot()
 network = scenario.find('NetworkSet/network')
@@ -34,8 +33,9 @@ for l in links.iter('link'):
     output_id = l.find('end').attrib['node_id']
     output_node = nodes.find(".//node[@id='"+output_id+"']")
     ET.SubElement(output_node.find('outputs'), 'output', {'link_id':l.attrib['id']})
-    l.remove(l.find('position'))
-    l.remove(l.find('shape'))
-    l.remove(l.find('roads'))
+    for s in ['position', 'shape', 'roads']:
+        a=l.find(s)
+        if a is not None:
+            l.remove(a)
 
-tree.write("thisoneisfixed.xml")
+tree.write(scenario_file.split('.')[-2] +'_fixed.xml')
