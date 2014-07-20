@@ -39,17 +39,24 @@ class Trajectory(object):
             self.direction.append(vdirs[int(d[18])])
             self.movement.append(vmovs[int(d[19])])
 
+    def find_time_in_link(self, link_id, direction):
+        linkdir = zip(self.link, self.direction)
+        if (link_id, direction) not in linkdir:
+            return None, None
+
+
     def find_last_time_in_link(self, link_id, direction):
         linkdir = zip(self.link, self.direction)
         # inlink = [i for i, j in izip(count(), linkdir) if j == (link_id, direction)]
-        lastin = len(linkdir)-1-linkdir[::-1].index((link_id, direction))
-        if lastin is []:
+        if (link_id, direction) in linkdir:
+            lastin = len(linkdir)-1-linkdir[::-1].index((link_id, direction))
+            return self.time[lastin], self.lane[lastin]
+        else:
             return None, None
-        return self.time[lastin], self.lane[lastin]
 
     def find_intersection_entry_time(self, intersection_id, direction=0):
         if direction == 0:
-            return self.time[self.intersection.index(link_id)]
+            return self.time[self.intersection.index(intersection_id)]
         intdir = zip(self.intersection, self.direction)
         return self.time[intdir.index([intersection_id, direction])]
 
