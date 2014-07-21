@@ -44,12 +44,12 @@ class Trajectory(object):
         if (link_id, direction) not in linkdir:
             return None, None
 
-
     def find_last_time_in_link(self, link_id, direction):
         linkdir = zip(self.link, self.direction)
         # inlink = [i for i, j in izip(count(), linkdir) if j == (link_id, direction)]
         if (link_id, direction) in linkdir:
             lastin = len(linkdir)-1-linkdir[::-1].index((link_id, direction))
+            print self.id, self.time[lastin], self.lane[lastin]
             return self.time[lastin], self.lane[lastin]
         else:
             return None, None

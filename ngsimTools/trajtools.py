@@ -60,7 +60,7 @@ def filter_by_destination(tlist, destination):
     transform this list into Trajectory objects and manipulate these objects
 '''
 from ngsimobjects import Trajectory
-from numpy import histogram
+from numpy import histogram, linspace
 
 
 def convert_list_to_trajectories(tlist):
@@ -80,24 +80,32 @@ def convert_list_to_trajectories(tlist):
         trajectories.append(Trajectory(vehs[v]))
     return trajectories
 
-
-def output_count_sensor(trajectories, link_number, direction, lane_numbers, time_range, resolution):
-    # print link_number
-    # print direction
-    # print lane_numbers
-    # print time_range
-    # print resolution
-    exit_times=[]
-    if not isinstance(lane_numbers, list):
-        lane_numbers = [lane_numbers]
+def output_loop_events(trajectories, link_number, direction):
+    exit_events={}
     for t in trajectories:
         time_in_link, lane_in_link = t.find_last_time_in_link(link_number, direction)
-        # print time_in_link, lane_in_link
-        if lane_in_link in lane_numbers:
-            # print 'counted'
-            exit_times.append(time_in_link)
-    exit_times.sort()
-    tbins = range(time_range[0], time_range[1], resolution*1000)
-    counts_vector, bin_edges = histogram(exit_times, tbins)
-    # # time_vector = bin_edges.tolist().append(max(bin_edges)+resolution*1000)
-    return bin_edges.tolist(), counts_vector.tolist()
+        if lane_in_link not in exit_events.keys():
+            exit_events[lane_in_link] = []
+        if lane_in_link is not None:
+            exit_events[lane_in_link].append(time_in_link)
+            print t.id, lane_in_link
+    return exit_events
+
+
+def output_count_sensor(trajectories, link_number, direction, time_range, resolution, lanes=0):
+    exit_events = output_loop_events(trajectories, link_number, direction)
+    print 'compiled exit events'
+    if lanes==0:
+        lanes=exit_events.keys()
+    elif not isinstance(lanes,list):
+        lanes=[lanes]
+    event_times = []
+    for lane in lanes:
+        event_times = event_times+exit_events[lane]
+        print lane
+    time_bounds = linspace(time_range[0],time_range[1], resolution*1000).tolist()
+    # print time_bounds
+    counts_array, time_array = histogram(event_times, bins=time_bounds)
+    return counts_array.tolist(), time_array.tolist()[1::]
+
+
