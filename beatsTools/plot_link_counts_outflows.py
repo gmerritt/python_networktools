@@ -3,7 +3,6 @@ __author__ = 'leahanderson'
 import matplotlib.pyplot as plt
 from os import listdir, path
 import sys
-from numpy import array
 
 from scenarioTools.networktools import load_network
 from beatsTools.outputtools import load_beats_output
@@ -16,7 +15,7 @@ output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v9_VCM'
 def main():
     network = load_network(network_xml)
     model_output, model_time = load_beats_output(network, output_prefix)
-    selected_links = ['31']
+    selected_links = ['38']
 
 
 
@@ -64,7 +63,6 @@ def main():
         plt.plot(model_time[0:-1], accumu(model_output['outflow_car'][l]), 'b',
                  data_time,accumu(data_counts), 'k')
         plt.show()
-        # print (model_output['outflow_car'][l])
 
 
 def accumu(alist):

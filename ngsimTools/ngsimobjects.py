@@ -69,3 +69,5 @@ class Trajectory(object):
         return [self.time[time_index], self.origin, self.link[time_index], self.direction[time_index],
                 self.intersection[time_index], self.movement[time_index], self.x[time_index], self.y[time_index]]
 
+    def get_destination_time(self):
+        return [self.destination, self.time[-1]]

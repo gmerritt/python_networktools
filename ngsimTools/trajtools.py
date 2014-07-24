@@ -102,10 +102,70 @@ def output_count_sensor(trajectories, link_number, direction, time_range, resolu
     event_times = []
     for lane in lanes:
         event_times = event_times+exit_events[lane]
-        print lane
     time_bounds = linspace(time_range[0],time_range[1], resolution*1000).tolist()
     # print time_bounds
     counts_array, time_array = histogram(event_times, bins=time_bounds)
     return counts_array.tolist(), time_array.tolist()[1::]
 
+
+def link_outflow_events_by_intersection(trajectories, intersection):
+    link_outflows = {}
+    missing_count = 0
+    for t in trajectories:
+        if intersection in t.intersection:
+            entry_index = t.intersection.index(intersection)
+            movement = t.movement[entry_index]
+            if entry_index<10:
+                incoming_link=t.origin
+                indirection = ''
+                etime = t.time[entry_index]
+            else:
+                incoming_link = t.link[entry_index-1]
+                indirection = t.direction[entry_index-1]
+                etime = t.time[entry_index-1]
+                if incoming_link==0:
+                    link_history  = t.link[0:entry_index]
+                    if sum(link_history)==0:
+                        incoming_link = t.origin
+                        indirection = ''
+                    else:
+                        link_history = [h for h in link_history if h!=0]
+                        candidate = link_history[-1]
+                        if candidate == intersection:
+                            incoming_link = candidate
+                            indirection = 'NB'
+                        elif candidate == intersection+1:
+                            incoming_link = candidate
+                            indirection = 'SB'
+                        else:
+                            missing_count +=1
+                        # elif candidate == intersection+2:
+                        #     incoming_link = intersection+1
+                        #     indirection = 'SB'
+                        # elif candidate == intersection-1:
+                        #     incoming_link = intersection
+                        #     indirection = 'NB'
+            if incoming_link!=0:
+                inlink = str(incoming_link)+indirection
+                if inlink == '1NB': inlink = '101'
+                if inlink == '5SB': inlink = '108'
+                if not inlink in link_outflows.keys():
+                    link_outflows[inlink] = {movement: [etime]}
+                elif not movement in link_outflows[inlink].keys():
+                    link_outflows[inlink][movement] = [etime]
+                else:
+                    link_outflows[inlink][movement]. append(etime)
+    print 'intersection '+str(intersection)+' complete, '+str(missing_count)+' link exits were not counted'
+    return link_outflows
+
+
+def network_outflow_events(trajectories):
+    exit_dict = {}
+    for t in trajectories:
+        exit_point = t.get_destination_time()
+        if not exit_point[0] in exit_dict.keys():
+            exit_dict[exit_point[0]] = [exit_point[1]]
+        else:
+            exit_dict[exit_point[0]].append(exit_point[1])
+    return exit_dict
 
