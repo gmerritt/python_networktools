@@ -55,8 +55,6 @@ for t in trajectories:
         origin_events[t.origin][first_movement].append(t.time[0])
 
 
-
-
 #aggregate entry time stamps into buckets of length TIME_AGGREGATION
 tbins = range(network_properties.time_range[0], network_properties.time_range[1], time_resolution*1000)
 origin_dict = {}

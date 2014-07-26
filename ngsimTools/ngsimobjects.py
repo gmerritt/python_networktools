@@ -71,3 +71,7 @@ class Trajectory(object):
 
     def get_destination_time(self):
         return [self.destination, self.time[-1]]
+
+    def get_origin_time(self):
+        first_movement=self.movement[next((i for i, x in enumerate(self.intersection) if x), None)]
+        return [self.origin, first_movement, self.time[0]]

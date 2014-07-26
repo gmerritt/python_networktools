@@ -13,8 +13,9 @@ from beatsTools.outputtools import load_beats_output
 
 
 dataset = '/Users/leahanderson/Code/datasets_external/lankershim'
-network_xml = 'scenarios/test_network_lankershim.xml'
-output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v11_VCM'
+network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_v14_VCM.xml'
+output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v14_VCM'
+time_aggregation=5
 
 
 def is_integer(s):
@@ -36,10 +37,12 @@ def accumu(alist):
 sys.path.append(dataset)
 import network_properties as netprops
 intersections = netprops.intersection_ids
-initial_time = netprops.time_range[0]+(125*1000)
-final_time = netprops.time_range[0]+(1925*1000)
+# initial_time = netprops.time_range[0]+(125*1000)
+# final_time = netprops.time_range[0]+(1925*1000)
+initial_time = netprops.time_range[0]
+final_time = netprops.time_range[0]+(1800*1000)
 # time_range = [initial_time, final_time]
-time_bounds = arange(initial_time,final_time, 5000).tolist()
+time_bounds = range(initial_time,final_time, time_aggregation*1000)
 # ignore_these_links = netprops.boundary_links
 
 events_dict={}
@@ -67,7 +70,7 @@ plot_time = [(t-initial_time)/1000.0 for t in time_bounds[1::]]
 
 for i in intersections:
     for link, move_dict in events_dict[i].iteritems():
-        if link in data_dict[i].keys():
+        if link in data_dict[i].keys():# and not is_integer(link) in netprops.origin_ids:
             plt.figure()
             p=1
             for m in ['T', 'R', 'L']:
@@ -76,9 +79,10 @@ for i in intersections:
                 else:
                     datah = [0]*len(plot_time)
                 if data_dict[i][link][m] is not None:
-                    modelh = model_output['outflow_car'][str(data_dict[i][link][m][0])][1::]
-                    for nlink in data_dict[i][link][m][1::]:
-                        modelh = [k+j for k,j in zip(modelh, model_output['outflow_car'][str(nlink)][1::])]
+                    modelh = [0]*len(plot_time)
+                    for nlink in data_dict[i][link][m]:
+                        if not nlink in netprops.shared_lanes.keys():
+                            modelh = [k+j for k,j in zip(modelh, model_output['outflow_car'][str(nlink)][1::])]
                         # print 'adding links'
                 else:
                     modelh = [0]*len(plot_time)
@@ -90,7 +94,7 @@ for i in intersections:
                 plt.title('movement: '+str(m))
                 # plt.gca().axes.xaxis.set_ticklabels([])
             if is_integer(link) in netprops.origin_ids:
-                plt.suptitle('Intersection '+str(i) +' INCOMING BOUNDARY FLOW '+ link)
+                plt.suptitle('Intersection '+str(i) +' BORDER FLOW THROUGH SIGNAL '+ link)
             else:
                 plt.suptitle('Link '+ link)
 plt.show()

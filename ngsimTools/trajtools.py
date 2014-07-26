@@ -169,3 +169,15 @@ def network_outflow_events(trajectories):
             exit_dict[exit_point[0]].append(exit_point[1])
     return exit_dict
 
+
+def network_inflow_events(trajectories):
+    entry_dict={}
+    for t in trajectories:
+        entry_point = t.get_origin_time()
+        if not entry_point[0] in entry_dict.keys():
+            entry_dict[entry_point[0]] = {entry_point[1]:[entry_point[2]]}
+        elif not entry_point[1] in entry_dict[entry_point[0]].keys():
+            entry_dict[entry_point[0]][entry_point[1]]=[entry_point[2]]
+        else:
+            entry_dict[entry_point[0]][entry_point[1]].append(entry_point[2])
+    return entry_dict
