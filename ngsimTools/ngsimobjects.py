@@ -8,7 +8,7 @@ class Trajectory(object):
 
     def __init__(self, datapoints):
         datapoints.sort(key=operator.itemgetter(3))
-        self.id = int(datapoints[0][0])
+        self.id = datapoints[0][0]
         self.start = int(datapoints[0][3])
         self.duration = int(datapoints[0][2])*.1  # in seconds
         vtypes = {1:'motorcycle', 2:'car', 3:'truck'}

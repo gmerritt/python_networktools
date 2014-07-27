@@ -8,14 +8,14 @@ from numpy import array
 from scenarioTools.networktools import load_network
 from outputtools import load_beats_output
 
-network_xml = 'scenarios/test_network_lankershim.xml'
-output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v12_VCM'
+network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_v14_VCM.xml'
+output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v14_VCM'
 
 
 def main():
     network = load_network(network_xml)
     model_output, time = load_beats_output(network, output_prefix)
-    selected_links = ['16', '32', '60']
+    selected_links = ['8','38', '6']
 
 
 

@@ -13,8 +13,8 @@ from beatsTools.outputtools import load_beats_output
 
 
 dataset = '/Users/leahanderson/Code/datasets_external/lankershim'
-network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_v14_VCM.xml'
-output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v14_VCM'
+network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_v17_VCM.xml'
+output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v17_VCM'
 time_aggregation=5
 
 
@@ -37,10 +37,8 @@ def accumu(alist):
 sys.path.append(dataset)
 import network_properties as netprops
 intersections = netprops.intersection_ids
-# initial_time = netprops.time_range[0]+(125*1000)
-# final_time = netprops.time_range[0]+(1925*1000)
 initial_time = netprops.time_range[0]
-final_time = netprops.time_range[0]+(1800*1000)
+final_time = netprops.time_range[1]
 # time_range = [initial_time, final_time]
 time_bounds = range(initial_time,final_time, time_aggregation*1000)
 # ignore_these_links = netprops.boundary_links
@@ -78,14 +76,13 @@ for i in intersections:
                     datah, _ = histogram(move_dict[m], bins=time_bounds)
                 else:
                     datah = [0]*len(plot_time)
+                modelh = [0]*len(plot_time)
                 if data_dict[i][link][m] is not None:
-                    modelh = [0]*len(plot_time)
                     for nlink in data_dict[i][link][m]:
                         if not nlink in netprops.shared_lanes.keys():
                             modelh = [k+j for k,j in zip(modelh, model_output['outflow_car'][str(nlink)][1::])]
+                            # print link, nlink
                         # print 'adding links'
-                else:
-                    modelh = [0]*len(plot_time)
                 plt.subplot(3,1,p)
                 p+=1
                 plt.plot(plot_time, accumu(datah))

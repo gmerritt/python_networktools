@@ -17,8 +17,8 @@ def load_beats_output(network, output_prefix):
         for il,l in enumerate(data['links']):
             # print il, l
             # print len(data_string)
-            for t in data_string:
-                if len(t)<59: print data_types[idx], il, l, len(t)
+            # for t in data_string:
+                # if len(t)<59: print data_types[idx], il, l, len(t)
             data[data_types[idx]][l]=[float(t[il]) for t in data_string]
 
     with open(output_prefix+'_time_0.txt') as f:

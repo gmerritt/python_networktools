@@ -10,8 +10,8 @@ from ngsimTools.trajtools import read_trajectory_file, convert_list_to_trajector
 
 
 dataset = '/Users/leahanderson/Code/datasets_external/lankershim'
-network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_v14_VCM.xml'
-output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v14_VCM'
+network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_v17_VCM.xml'
+output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v17_VCM'
 time_aggregation = 5
 
 sys.path.append(dataset)

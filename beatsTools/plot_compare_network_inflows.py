@@ -13,8 +13,8 @@ from beatsTools.outputtools import load_beats_output
 
 
 dataset = '/Users/leahanderson/Code/datasets_external/lankershim'
-network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_v12_VCM.xml'
-output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v12_VCM'
+network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_v15_VCM.xml'
+output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v15_VCM'
 
 
 def is_integer(s):
@@ -37,10 +37,8 @@ sys.path.append(dataset)
 import network_properties as netprops
 
 origins = netprops.origin_ids
-# initial_time = netprops.time_range[0]+(125*1000)
-# final_time = netprops.time_range[0]+(1925*1000)
 initial_time = netprops.time_range[0]
-final_time = netprops.time_range[0]+(1800*1000)
+final_time = netprops.time_range[1]
 time_resolution = 5
 # time_range = [initial_time, final_time]
 time_bounds = arange(initial_time,final_time, 1000*time_resolution).tolist()

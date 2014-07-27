@@ -1,15 +1,14 @@
 __author__ = 'leahanderson'
 
 import matplotlib.pyplot as plt
-from os import listdir, path
 import sys
 
 from scenarioTools.networktools import load_network
 from beatsTools.outputtools import load_beats_output
-from ngsimTools.trajtools import read_trajectory_file, convert_list_to_trajectories, output_count_sensor
+from ngsimTools.trajtools import direct_to_trajectories, output_count_sensor
 
 network_xml = 'scenarios/test_network_lankershim.xml'
-output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v9_VCM'
+output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v15_VCM'
 
 
 def main():
@@ -34,19 +33,12 @@ def main():
                      '31':[2, 'NB', [11]] }
 
 
-
-    t=[]
-    for f in listdir(dataset+'/vehicle-trajectory-data/'):
-        if path.isdir(dataset+'/vehicle-trajectory-data/'+f):
-            filename = listdir(dataset+'/vehicle-trajectory-data/'+f)[0]
-            print filename
-            t.append(read_trajectory_file(dataset+'/vehicle-trajectory-data/'+f+'/'+filename))
-    traj_list = convert_list_to_trajectories(t)
+    traj_list = direct_to_trajectories(dataset)
 
     for l in selected_links:
         link_info = corresponding[l]
-        initial_time = netprops.time_range[0]+(125*1000)
-        final_time = netprops.time_range[0]+(1925*1000)
+        initial_time = netprops.time_range[0]
+        final_time = netprops.time_range[1]
         data_counts, data_time = output_count_sensor(traj_list, link_info[0], link_info[1], [initial_time, final_time],
                                                      5, link_info[2])
         data_time = [(d-initial_time)/1000.0 for d in data_time]

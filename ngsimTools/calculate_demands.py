@@ -1,32 +1,16 @@
 #!/usr/bin/env python
 __author__ = 'leahanderson'
 
-#
-#
-# #SET NUMBER OF SECONDS TO AGGREGATE DEMANDS (typically model dt)
-# TIME_AGGREGATION = 5
-# #DEFINE PATH TO DATASET MAIN FOLDER
-# dataset = '/Users/leahanderson/Code/datasets_external/lankershim'
-# #LANKERSHIM:
-# network_links = {'101T':10, '102R':8, '102L':7, '103R':11, '103L':2, '103T':3, '105R':24, '105L':25, '105T':26,
-#                  '107R':53, '107L':54, '107T':52, '108R':51, '108L':50, '108T':48, '109R':57, '109L':58, '109T':56,
-#                  '110R':28, '110L':27, '110T':30, '111R':20, '111L':21, '111T':22}
-#
-
-from trajtools import read_trajectory_file, convert_list_to_trajectories
-from os import listdir, path
+from trajtools import direct_to_trajectories
 import sys
 from numpy import histogram
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
 
 
-
 time_resolution = 5
 dataset = '/Users/leahanderson/Code/datasets_external/lankershim'
-
-
-
+trajectories = direct_to_trajectories(dataset)
 sys.path.append(dataset)
 import network_properties
 netlinks_dict = {}
@@ -35,13 +19,6 @@ for odict in network_properties.data_to_scenario.values():
         for mid,nid in mdict.iteritems():
             netlinks_dict[oid+mid]=nid
 
-tlist=[]
-for f in listdir(dataset+'/vehicle-trajectory-data/'):
-    if path.isdir(dataset+'/vehicle-trajectory-data/'+f):
-        filename = listdir(dataset+'/vehicle-trajectory-data/'+f)[0]
-        print filename
-        tlist.append(read_trajectory_file(dataset+'/vehicle-trajectory-data/'+f+'/'+filename))
-trajectories = convert_list_to_trajectories(tlist)
 
 modeled_origins = [o for o in network_properties.origin_ids if o not in network_properties.driveways]
 
@@ -82,7 +59,7 @@ print(reparsed.toprettyxml(indent="\t"))
 
 
 
-#
+#### OLD VERSION
 # for o in network_properties.origin_ids:
 #     olist = trajtools.convert_list_to_trajectories(trajtools.filter_by_origin(t, o))
 #     print 'ORIGIN'+ str(o)

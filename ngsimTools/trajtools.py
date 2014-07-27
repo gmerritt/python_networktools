@@ -10,12 +10,14 @@ __author__ = 'leahanderson'
 
 
 
-def read_trajectory_file(trajectoryfile):
+def read_trajectory_file(trajectoryfile, id_prefix=""):
     #THIS READS IN THE TRAJECTORY FILES. IT IS THE FIRST THING YOU NEED TO DO.
     trajlist=[]
     with open(trajectoryfile) as inputfile:
         for line in inputfile:
-            trajlist.append(line.split())
+            lo = line.split()
+            lo[0] = lo[0]+id_prefix
+            trajlist.append(lo)
     return trajlist
 
 
@@ -62,6 +64,21 @@ def filter_by_destination(tlist, destination):
 from ngsimobjects import Trajectory
 from numpy import histogram, linspace
 
+def direct_to_trajectories(dataset):
+    from os import listdir, path
+    tlist=[]
+    idprefixes=['a','b','c','d','e','f','g']
+    fn=-0
+    for f in listdir(dataset+'/vehicle-trajectory-data/'):
+        if path.isdir(dataset+'/vehicle-trajectory-data/'+f):
+            filename = listdir(dataset+'/vehicle-trajectory-data/'+f)[0]
+            idp = idprefixes[fn]
+            print filename, idp
+            fn+=1
+            tlist.append(read_trajectory_file(dataset+'/vehicle-trajectory-data/'+f+'/'+filename, idp))
+    trajectories = convert_list_to_trajectories(tlist)
+    return trajectories
+
 
 def convert_list_to_trajectories(tlist):
     vehs={}
@@ -70,7 +87,7 @@ def convert_list_to_trajectories(tlist):
             # print(dp)
             # time.sleep(1)
             # print(dp[0])
-            id = int(dp[0])
+            id = dp[0]
             if not vehs.has_key(id):
                 vehs[id]=[]
             vehs[id].append(dp)
