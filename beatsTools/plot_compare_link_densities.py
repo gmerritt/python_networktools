@@ -5,23 +5,30 @@ import matplotlib.pyplot as plt
 from numpy import  zeros
 from scenarioTools.networktools import load_network
 from beatsTools.outputtools import load_beats_output
+from matplotlib.backends.backend_pdf import PdfPages
 
+version = 'v18'
+model_name = ['VCM']
 if len(sys.argv)<=1:
-    SUFFIX='v18_VCM'
-    print('no filename given, using '+SUFFIX)
+    print('no filename given, using '+version+'_'+model_name[0])
 else:
     version =sys.argv[1]
-    model_name=sys.argv[2]
-    SUFFIX = version+'_'+model_name
-    print('using model '+SUFFIX)
+    model_name=['CTM', 'VCM']
+    if len(sys.argv)>2:
+        model_name=[sys.argv[2]]
+    for s in model_name:
+        print('using model '+version+'_'+s)
 
+network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_'+version+'_'+model_name[0]+'.xml'
+output_prefix={}
+for mt in model_name:
+    output_prefix[mt]='/Users/leahanderson/Code/Lanksershim_Network/output/'+version+'_'+mt
 dataset = '/Users/leahanderson/Code/datasets_external/lankershim'
-network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_'+SUFFIX+'.xml'
-output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/'+SUFFIX
 time_aggregation = 5
 
 sys.path.append(dataset)
 
+pp = PdfPages('densities_'+version+'.pdf')
 import network_properties as netprops
 intersections = netprops.intersection_ids
 links = netprops.link_ids
@@ -54,7 +61,10 @@ with open(dataset+'/densities_links.csv', 'rb') as csvfile:
 #     plt.suptitle('Link '+str(l))
 # plt.show()
 
-model_output, model_time = load_beats_output(network, output_prefix)
+model_output = {}
+for mt in model_name:
+    mout, model_time = load_beats_output(network, output_prefix[mt])
+    model_output[mt]=mout
 data_plot_time = range(initial_time, final_time)
 model_plot_time = range(initial_time, final_time, time_aggregation)
 network_dict = {}
@@ -67,7 +77,9 @@ for l, mdict in link_densities.iteritems():
         for m in ['T', 'R', 'L']:
             plt.subplot(3,1,p)
             p+=1
-            modelh = zeros(len(model_plot_time))
+            modelh = {}
+            for mt in model_name:
+                modelh[mt]=zeros(len(model_plot_time))
             if network_dict[l][m] is not None:
                 for nlink in network_dict[l][m]:
                     if nlink in netprops.shared_lanes.keys():
@@ -76,14 +88,18 @@ for l, mdict in link_densities.iteritems():
                         # print link, nlink, dlink, split_scale
                     else:
                         split_scale=1.0
-                    modelh = [k+(j*split_scale) for k,j in zip(modelh, model_output['density_car'][str(nlink)][1::])]
+                    for mt in model_name:
+                        # print modelh
+                        modelh[mt] = [k+(j*split_scale) for k, j in zip(modelh[mt], model_output[mt]['density_car'][str(nlink)][1::])]
                     # print 'adding links'
                 plt.plot(data_plot_time, mdict[m])
-                plt.plot(model_plot_time, modelh)
-            plt.legend(['data', model_name], loc=2 )
+                for mt in model_name:
+                    plt.plot(model_plot_time, modelh[mt])
+            plt.legend(['data']+ model_name, bbox_to_anchor=(0, 0, 1, 1), bbox_transform=plt.gcf().transFigure)
             plt.title(m)
         plt.suptitle('Link '+str(l))
-plt.show()
+        pp.savefig()
+pp.close()
 
 #
 #

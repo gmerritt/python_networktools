@@ -1,4 +1,5 @@
 __author__ = 'leahanderson'
+__author__ = 'leahanderson'
 '''
     This is a simple script to plot modeled outflows and observed outflows on the same axis.
     Before using this script, you need to run ngsimTools/save_loop_events.py for desired dataset to get observed flows.
@@ -9,27 +10,30 @@ import matplotlib.pyplot as plt
 from numpy import histogram
 from scenarioTools.networktools import load_network
 from beatsTools.outputtools import load_beats_output
+from matplotlib.backends.backend_pdf import PdfPages
 
+
+
+version = 'v18'
+model_name = ['VCM']
 if len(sys.argv)<=1:
-    SUFFIX='v18_VCM'
-    print('no filename given, using '+SUFFIX)
+    print('no filename given, using '+version+'_'+model_name[0])
 else:
     version =sys.argv[1]
     model_name=['CTM', 'VCM']
     if len(sys.argv)>2:
         model_name=[sys.argv[2]]
-    SUFFIX=[]
     for s in model_name:
-        SUFFIX.append(version+'_'+s)
-        print('detected model '+version+'_'+s)
+        print('using model '+version+'_'+s)
 
+
+pp = PdfPages('outflows_'+version+'.pdf')
+network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_'+version+'_'+model_name[0]+'.xml'
+output_prefix={}
+for mt in model_name:
+    output_prefix[mt]='/Users/leahanderson/Code/Lanksershim_Network/output/'+version+'_'+mt
 dataset = '/Users/leahanderson/Code/datasets_external/lankershim'
-network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_'+SUFFIX[0]+'.xml'
-output_prefix=[]
-for o in SUFFIX:
-    output_prefix.append( '/Users/leahanderson/Code/Lanksershim_Network/output/'+o)
-    
-time_aggregation=5
+time_aggregation = 5
 
 
 def is_integer(s):
@@ -38,15 +42,6 @@ def is_integer(s):
         return int(s)
     except ValueError:
         return s
-
-def accumu(alist):
-    a = []
-    total = alist[0]
-    a.append(total)
-    for x in alist[1::]:
-        total += x
-        a.append(total)
-    return a
 
 sys.path.append(dataset)
 import network_properties as netprops
@@ -76,9 +71,13 @@ with open(dataset+'/count_events.csv', 'rb') as csvfile:
 
 data_dict = netprops.data_to_scenario
 network = load_network(network_xml)
-model_output, model_time = load_beats_output(network, output_prefix)
+model_output={}
+for mt in model_name:
+    mout, model_time = load_beats_output(network, output_prefix[mt])
+    model_output[mt]=mout
 plot_time = [(t-initial_time)/1000.0 for t in time_bounds[1::]]
 # markers = itertools.cycle([ '+', '*', ',', 'o', '.', '1', 'p', ])
+
 
 for i in intersections:
     for link, move_dict in events_dict[i].iteritems():
@@ -90,24 +89,30 @@ for i in intersections:
                     datah, _ = histogram(move_dict[m], bins=time_bounds)
                 else:
                     datah = [0]*len(plot_time)
-                modelh = [0]*len(plot_time)
+                modelh = {}
+                for mt in model_name:
+                    modelh[mt]=[0]*len(plot_time)
                 if data_dict[i][link][m] is not None:
                     for nlink in data_dict[i][link][m]:
                         if not nlink in netprops.shared_lanes.keys():
-                            modelh = [k+j for k,j in zip(modelh, model_output['outflow_car'][str(nlink)][1::])]
+                            for mt in model_name:
+                                modelh[mt] = [k+j for k,j in zip(modelh[mt], model_output[mt]['outflow_car'][str(nlink)][1::])]
                             # print link, nlink
                         # print 'adding links'
                 plt.subplot(3,1,p)
                 p+=1
-                plt.plot(plot_time, accumu(datah))
-                plt.plot(plot_time, accumu(modelh))
-                plt.legend(['data', model_name], loc=2 )
+                plt.plot(plot_time, datah)
+                for mt in model_name:
+                    plt.plot(plot_time, modelh[mt])
+                # plt.legend(['data']+ model_name, loc=2 )
                 plt.title('movement: '+str(m))
                 # plt.gca().axes.xaxis.set_ticklabels([])
             if is_integer(link) in netprops.origin_ids:
                 plt.suptitle('Intersection '+str(i) +' BORDER FLOW THROUGH SIGNAL '+ link)
             else:
                 plt.suptitle('Link '+ link)
-plt.show()
+                plt.legend(['data']+ model_name, bbox_to_anchor=(0, 0, 1, 1), bbox_transform=plt.gcf().transFigure)
+                pp.savefig()
+pp.close()
 
 
