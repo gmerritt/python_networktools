@@ -1,17 +1,23 @@
 __author__ = 'leahanderson'
 import sys
-from os import listdir, path
 import csv
 import matplotlib.pyplot as plt
-from numpy import histogram, arange, array, zeros
+from numpy import  zeros
 from scenarioTools.networktools import load_network
 from beatsTools.outputtools import load_beats_output
-from ngsimTools.trajtools import read_trajectory_file, convert_list_to_trajectories
 
+if len(sys.argv)<=1:
+    SUFFIX='v18_VCM'
+    print('no filename given, using '+SUFFIX)
+else:
+    version =sys.argv[1]
+    model_name=sys.argv[2]
+    SUFFIX = version+'_'+model_name
+    print('using model '+SUFFIX)
 
 dataset = '/Users/leahanderson/Code/datasets_external/lankershim'
-network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_v17_VCM.xml'
-output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v17_VCM'
+network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_'+SUFFIX+'.xml'
+output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/'+SUFFIX
 time_aggregation = 5
 
 sys.path.append(dataset)
@@ -74,6 +80,7 @@ for l, mdict in link_densities.iteritems():
                     # print 'adding links'
                 plt.plot(data_plot_time, mdict[m])
                 plt.plot(model_plot_time, modelh)
+            plt.legend(['data', model_name], loc=2 )
             plt.title(m)
         plt.suptitle('Link '+str(l))
 plt.show()

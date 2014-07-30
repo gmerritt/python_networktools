@@ -6,15 +6,29 @@ __author__ = 'leahanderson'
 import sys
 import csv
 import matplotlib.pyplot as plt
-from numpy import histogram, arange
-# import itertools
+from numpy import histogram
 from scenarioTools.networktools import load_network
 from beatsTools.outputtools import load_beats_output
 
+if len(sys.argv)<=1:
+    SUFFIX='v18_VCM'
+    print('no filename given, using '+SUFFIX)
+else:
+    version =sys.argv[1]
+    model_name=['CTM', 'VCM']
+    if len(sys.argv)>2:
+        model_name=[sys.argv[2]]
+    SUFFIX=[]
+    for s in model_name:
+        SUFFIX.append(version+'_'+s)
+        print('detected model '+version+'_'+s)
 
 dataset = '/Users/leahanderson/Code/datasets_external/lankershim'
-network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_v17_VCM.xml'
-output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v17_VCM'
+network_xml = '/Users/leahanderson/Code/Lanksershim_Network/Lshim_'+SUFFIX[0]+'.xml'
+output_prefix=[]
+for o in SUFFIX:
+    output_prefix.append( '/Users/leahanderson/Code/Lanksershim_Network/output/'+o)
+    
 time_aggregation=5
 
 
@@ -87,7 +101,7 @@ for i in intersections:
                 p+=1
                 plt.plot(plot_time, accumu(datah))
                 plt.plot(plot_time, accumu(modelh))
-                plt.legend(['data', 'VCM'])
+                plt.legend(['data', model_name], loc=2 )
                 plt.title('movement: '+str(m))
                 # plt.gca().axes.xaxis.set_ticklabels([])
             if is_integer(link) in netprops.origin_ids:
