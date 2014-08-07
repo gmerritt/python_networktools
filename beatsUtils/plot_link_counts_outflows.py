@@ -3,9 +3,9 @@ __author__ = 'leahanderson'
 import matplotlib.pyplot as plt
 import sys
 
-from scenarioTools.networktools import load_network
-from beatsTools.outputtools import load_beats_output
-from ngsimTools.trajtools import direct_to_trajectories, output_count_sensor
+from scenarioUtils.networktools import load_network
+from beatsUtils.outputtools import load_beats_output
+from ngsimUtils.trajtools import direct_to_trajectories, output_count_sensor
 
 network_xml = 'scenarios/test_network_lankershim.xml'
 output_prefix = '/Users/leahanderson/Code/Lanksershim_Network/output/v15_VCM'

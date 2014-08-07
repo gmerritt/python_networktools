@@ -1,14 +1,14 @@
 __author__ = 'leahanderson'
 '''
     This is a simple script to plot modeled outflows and observed outflows on the same axis.
-    Before using this script, you need to run ngsimTools/save_loop_events.py for desired dataset to get observed flows.
+    Before using this script, you need to run ngsimUtils/save_loop_events.py for desired dataset to get observed flows.
 '''
 import sys
 import csv
 import matplotlib.pyplot as plt
 from numpy import histogram
-from scenarioTools.networktools import load_network
-from beatsTools.outputtools import load_beats_output
+from scenarioUtils.networktools import load_network
+from beatsUtils.outputtools import load_beats_output
 from matplotlib.backends.backend_pdf import PdfPages
 
 

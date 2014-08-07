@@ -3,8 +3,8 @@ import sys
 import csv
 import matplotlib.pyplot as plt
 from numpy import  zeros
-from scenarioTools.networktools import load_network
-from beatsTools.outputtools import load_beats_output
+from scenarioUtils.networktools import load_network
+from beatsUtils.outputtools import load_beats_output
 from matplotlib.backends.backend_pdf import PdfPages
 
 version = 'v18'

@@ -1,6 +1,6 @@
 __author__ = 'leahanderson'
 
-from scenarioTools.networktools import load_network
+from scenarioUtils.networktools import load_network
 from outputtools import load_beats_output
 
 network = load_network('test_network_lankershim.xml')

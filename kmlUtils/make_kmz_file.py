@@ -2,8 +2,8 @@ __author__ = 'leahanderson'
 from optparse import OptionParser
 from pyUtils.log import abort
 from kmltools import convert_network_to_kml, convert_data_to_kml, write_kmz
-from scenarioTools.networktools import load_network
-from beatsTools.outputtools import load_beats_output
+from scenarioUtils.networktools import load_network
+from beatsUtils.outputtools import load_beats_output
 
 
 def main():

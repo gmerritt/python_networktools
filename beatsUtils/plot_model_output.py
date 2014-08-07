@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import sys
 
 
-from scenarioTools.networktools import load_network
+from scenarioUtils.networktools import load_network
 from outputtools import load_beats_output
 version = 'v18'
 model_name = ['VCM']

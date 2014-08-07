@@ -5,8 +5,8 @@ import matplotlib
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from numpy import zeros, histogram
-from scenarioTools.networktools import load_network
-from beatsTools.outputtools import load_beats_output
+from scenarioUtils.networktools import load_network
+from beatsUtils.outputtools import load_beats_output
 
 
 #

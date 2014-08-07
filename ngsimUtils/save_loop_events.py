@@ -3,7 +3,7 @@ __author__ = 'leahanderson'
 import sys
 import csv
 
-from ngsimTools.trajtools import direct_to_trajectories, link_outflow_events_by_intersection, network_outflow_events, \
+from ngsimUtils.trajtools import direct_to_trajectories, link_outflow_events_by_intersection, network_outflow_events, \
                                     network_inflow_events
 
 
