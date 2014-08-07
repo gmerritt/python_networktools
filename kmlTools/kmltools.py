@@ -51,10 +51,10 @@ def setup_kdoc(kobj, dname, desc):
     doc = kobj.createDocument(dname, desc)
     label_size=0 #change this to \in [0,1] to make object labels show up in kmz files
     # define node styles
-    doc.appendChild(kobj.createStyle('intersection_node', [kobj.createIconStyle(1.2, kobj.createIcon('../map_icons/signalized_intersection.png')),  kobj.createLabelStyle(label_size)]))
-    doc.appendChild(kobj.createStyle('terminal_node', [kobj.createIconStyle(0.5, kobj.createIcon('../map_icons/blue_rounded_square.png')),  kobj.createLabelStyle(label_size)]))
-    doc.appendChild(kobj.createStyle('intermediate_node', [kobj.createIconStyle(0.8, kobj.createIcon('../map_icons/shaded_dot.png')),  kobj.createLabelStyle(label_size)]))
-    doc.appendChild(kobj.createStyle('empty_link', kobj.createLineStyle('ffffffff', 1)))
+    doc.appendChild(kobj.createStyle('intersection_node', [kobj.createIconStyle(1.2, kobj.createIcon('files/signalized_intersection.png')), kobj.createLabelStyle(label_size)]))
+    doc.appendChild(kobj.createStyle('terminal_node', [kobj.createIconStyle(0.5, kobj.createIcon('files/blue_rounded_square.png')), kobj.createLabelStyle(label_size)]))
+    doc.appendChild(kobj.createStyle('intermediate_node', [kobj.createIconStyle(0.8, kobj.createIcon('files/shaded_dot.png')), kobj.createLabelStyle(label_size)]))
+    doc.appendChild(kobj.createStyle('empty_link', kobj.createLineStyle('ff00ff00', 2)))
     # define link styles
     lwidth = {'red':1, 'green':2}
     for i in lwidth.keys():
@@ -72,8 +72,11 @@ def write_kmz(kml, filename):
     kml.writePlain(tmp)
     tmp.close()
     kmz.write(tmpname, 'doc.kml')
+    kmz.write('map_icons','files')
+    for file in os.listdir('./map_icons'):
+        kmz.write('./map_icons/'+file, 'files/'+file)
     for z in kmz.infolist():
-        z.external_attr = 0644 << 16L # set file perms
+        z.external_attr = 0777 << 16L #0644 << 16L # set file perms
     kmz.close()
     os.unlink(tmpname)
     os.rename(filename+'.tmp', filename)

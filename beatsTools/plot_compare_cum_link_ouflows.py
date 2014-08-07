@@ -113,11 +113,17 @@ for i in intersections:
                 # plt.legend(['data']+ model_name, loc=2 )
                 plt.title('movement: '+str(m))
                 # plt.gca().axes.xaxis.set_ticklabels([])
+                if link in ['2NB', '3NB', '4NB', '4SB', '3SB', '2SB'] and m is 'T':
+                    for mt in model_name:
+                        print(mt + ' cumulative error Link '+link+': ' + str((accumu(modelh[mt])[-1]- accumu(datah)[-1])))
+                        pererror = (accumu(modelh[mt])[-1] -  accumu(datah)[-1])/accumu(datah)[-1] *100
+                        print ( '= '+ str(pererror) +'%')
             if is_integer(link) in netprops.origin_ids:
                 plt.suptitle('Intersection '+str(i) +' BORDER FLOW THROUGH SIGNAL '+ link)
             else:
                 plt.suptitle('Link '+ link)
                 plt.legend(['data']+ model_name, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
                 pp.savefig()
+
 pp.close()
 
