@@ -6,6 +6,7 @@ __author__ = 'leahanderson'
     human-readable trajectory object type -- because the whole trajectory files are huge, and the conversion process is
     relatively slow... so first run read_trajectory_file, then do filtering, then convert the resulting list of data
     points into Trajectory objects!
+
 '''
 
 

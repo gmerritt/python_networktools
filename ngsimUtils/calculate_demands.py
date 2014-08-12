@@ -1,6 +1,16 @@
 #!/usr/bin/env python
 __author__ = 'leahanderson'
 
+
+'''
+This script is tailored to my purpose and won't be very useful for you... but you can use the methodology for other things.
+The vehicles are not always sensed in the entry links, they are not actually sensed until they reach their first
+intersection. So this script finds the first time they are in an intersection and reads their origin
+You will need to change the dataset path, or edit this script to make it a command line arguement
+if that is more convenient for you =)
+This prints the demands to a string, you will need to copy and paste into scenario file yourself...
+also you'll need a network properties file like the one for lankershim_v19 in old_conversion_tools/network_properties.py
+'''
 from trajtools import direct_to_trajectories
 import sys
 from numpy import histogram
@@ -57,87 +67,3 @@ rough_string = ET.tostring(demand_set, 'utf-8')
 reparsed = minidom.parseString(rough_string)
 print(reparsed.toprettyxml(indent="\t"))
 
-
-
-#### OLD VERSION
-# for o in network_properties.origin_ids:
-#     olist = trajtools.convert_list_to_trajectories(trajtools.filter_by_origin(t, o))
-#     print 'ORIGIN'+ str(o)
-#     if len(olist)>0:
-#         trajs_by_origin[o] = olist
-#         driveway=False
-#         if o in network_properties.driveways:
-#             driveway = True
-#         else:
-#             entries[o]={'L':[], 'R':[], 'T':[]}
-#         for oi in olist:
-#             entry_point = oi.get_start_point()
-#             ei=1
-#             while entry_point[2]==0 and entry_point[4] ==0:
-#                 entry_point = oi.get_traj_point(ei)
-#                 ei+=1
-#             if not driveway:
-#                 entries[o][entry_point[5]].append(entry_point[0])
-#
-#
-
-#
-# #import raw trajectory data
-# t=[]
-# for f in listdir(dataset+'/vehicle-trajectory-data/'):
-#     if path.isdir(dataset+'/vehicle-trajectory-data/'+f):
-#         filename = listdir(dataset+'/vehicle-trajectory-data/'+f)[0]
-#         t.append(trajtools.read_trajectory_file(dataset+'/vehicle-trajectory-data/'+f+'/'+filename))
-#
-# #sort by origin, convert to trajectory objects
-# trajs_by_origin = {}
-# entries={}
-# for o in network_properties.origin_ids:
-#     olist = trajtools.convert_list_to_trajectories(trajtools.filter_by_origin(t, o))
-#     print 'ORIGIN'+ str(o)
-#     if len(olist)>0:
-#         trajs_by_origin[o] = olist
-#         driveway=False
-#         if o in network_properties.driveways:
-#             driveway = True
-#         else:
-#             entries[o]={'L':[], 'R':[], 'T':[]}
-#         for oi in olist:
-#             entry_point = oi.get_start_point()
-#             ei=1
-#             while entry_point[2]==0 and entry_point[4] ==0:
-#                 entry_point = oi.get_traj_point(ei)
-#                 ei+=1
-#             if not driveway:
-#                 entries[o][entry_point[5]].append(entry_point[0])
-#
-# #aggregate entry time stamps into buckets of length TIME_AGGREGATION
-# tbins = range(network_properties.time_range[0], network_properties.time_range[1], TIME_AGGREGATION*1000)
-# for origin_id, entry_list in entries.iteritems():
-#     lefts, unused = histogram(entry_list['L'], tbins)
-#     entry_list['L'] = lefts/float(TIME_AGGREGATION)
-#     rights, unused = histogram(entry_list['R'], tbins)
-#     entry_list['R'] = rights/float(TIME_AGGREGATION)
-#     throughs, unused = histogram(entry_list['T'], tbins)
-#     entry_list['T'] = throughs/float(TIME_AGGREGATION)
-#
-# #print out xml
-# demand_set= ET.Element('DemandSet')
-# demand_set.attrib['id']='-1'
-# demand_set.attrib['project_id']='-1'
-# for origin_id, movement_queues in entries.iteritems():
-#     for m in movement_queues.keys():
-#         if sum(movement_queues[m])>0:
-#             demand_profile = ET.SubElement(demand_set, 'demandProfile')
-#             demand_profile.attrib['dt']=str(TIME_AGGREGATION)
-#             demand_profile.attrib['id']=str(-1)
-#             demand_profile.attrib['knob']=str(1)
-#             demand_profile.attrib['link_id_org']=str(network_links[str(origin_id)+m])
-#             demand = ET.SubElement(demand_profile, 'demand')
-#             demand.attrib['vehicle_type_id']='0'
-#             demand.text = str(movement_queues[m].tolist()).strip('[]').replace(' ','')
-#
-#
-# rough_string = ET.tostring(demand_set, 'utf-8')
-# reparsed = minidom.parseString(rough_string)
-# print(reparsed.toprettyxml(indent="\t"))

@@ -1,4 +1,10 @@
 __author__ = 'leahanderson'
+'''
+THIS HAS TO BE RUN BEFORE MOST OF THE PLOTTING TOOLS WILL WORK. you will need to change the dataset path...
+or edit to make this a command line input if more convenient!
+also you'll need a network properties file like the one for lankershim_v19 in old_conversion_tools/network_properties.py
+
+'''
 
 import sys
 import csv
