@@ -74,7 +74,7 @@ def write_kmz(kml, filename):
     kmz.write(tmpname, 'doc.kml')
     kmz.write('map_icons','files')
     for iconfile in os.listdir('./map_icons'):
-        kmz.write('./map_icons/'+iconfile, 'files/'+icsonfile)
+        kmz.write('./map_icons/'+iconfile, 'files/'+iconfile)
     for z in kmz.infolist():
         z.external_attr = 0777 << 16L #0644 << 16L # set file perms
     kmz.close()
