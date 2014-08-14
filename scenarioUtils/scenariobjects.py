@@ -38,19 +38,21 @@ class ScenarioNetwork:
 
         demand_dict={}
         demandset = scenario_tree.find('DemandSet')
-        for d in demandset.iter('demandProfile'):
-            demand_dict[d.attrib['link_id_org']]=[float(i) for i in d.find('demand').text.split(',')]
+        if demandset is not None:
+            for d in demandset.iter('demandProfile'):
+                demand_dict[d.attrib['link_id_org']]=[float(i) for i in d.find('demand').text.split(',')]
         self.demand_dict = demand_dict
 
         splits_dict={}
         splitset = scenario_tree.find('SplitRatioSet')
-        for snode in splitset.iter('splitRatioProfile'):
-            for s in snode.iter('splitratio'):
-                sin = int(s.attrib['link_in'])
-                sout = int(s.attrib['link_out'])
-                if sin not in splits_dict.keys():
-                    splits_dict[sin]={}
-                splits_dict[sin][sout]=float(s.text)
+        if splitset is not None:
+            for snode in splitset.iter('splitRatioProfile'):
+                for s in snode.iter('splitratio'):
+                    sin = int(s.attrib['link_in'])
+                    sout = int(s.attrib['link_out'])
+                    if sin not in splits_dict.keys():
+                        splits_dict[sin]={}
+                    splits_dict[sin][sout]=float(s.text)
         self.splits_dict = splits_dict
         # print splits_dict
 
